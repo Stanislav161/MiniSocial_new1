@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Редактировать профиль{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Редактировать профиль</h2>
+
+                <!-- Текущая аватарка -->
+                <div class="text-center mb-4">
+                    {% if user.profile.get_profile_picture_url %}
+                        <img src="{{ user.profile.get_profile_picture_url }}"
+                             alt="{{ user.username }}"
+                             class="rounded-circle mb-3 border"
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3 border"
+                             style="width: 150px; height: 150px; background: linear-gradient(135deg, #4a6fa5, #6a8cc5); color: white; font-size: 3rem;">
+                            {{ user.username|first|upper }}
+                        </div>
+                    {% endif %}
+                    <p class="text-muted">Текущая аватарка</p>
+                </div>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Вывод ошибок формы -->
+                    {% if u_form.errors or p_form.errors %}
+                    <div class="alert alert-danger">
+                        Пожалуйста, исправьте ошибки ниже.
+                        {{ u_form.errors }}
+                        {{ p_form.errors }}
+                    </div>
+                    {% endif %}
+
+                    <h5 class="mb-3">Основная информация</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ u_form.username|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ u_form.email|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h5 class="mb-3">Дополнительная информация</h5>
+
+                    <div class="mb-3">
+                        {{ p_form.bio|as_crispy_field }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ p_form.location|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ p_form.birth_date|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ p_form.website|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <!-- Контейнер для поля аватарки с кастомными стилями -->
+                            <div class="file-upload-container">
+                                <label class="form-label">Аватарка</label>
+                                {{ p_form.profile_picture }}
+
+                                <!-- Информация об удалении аватарки -->
+                                {% if user.profile.get_profile_picture_url %}
+                                <div class="alert alert-info mt-2 p-2">
+                                    <small>
+                                        <i class="bi bi-info-circle"></i>
+                                        Чтобы удалить аватарку, отметьте флажок "Очистить" выше.
+                                    </small>
+                                </div>
+                                {% else %}
+                                <div class="alert alert-secondary mt-2 p-2">
+                                    <small>
+                                        <i class="bi bi-info-circle"></i>
+                                        Аватарка не установлена. Загрузите изображение.
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Сохранить изменения
+                        </button>
+                        <a href="{% url 'profile' user.username %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Стили для поля загрузки файла */
+.file-upload-container input[type="file"] {
+    padding: 8px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    width: 100%;
+}
+
+/* Уменьшаем отступы для чекбокса "Очистить" */
+.file-upload-container .clearable-file-input {
+    margin-top: 5px !important;
+}
+
+.file-upload-container .clearable-file-input label {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+/* Компактное отображение текущего файла */
+.file-upload-container .clearable-file-input br {
+    display: none;
+}
+
+/* Стили для Bootstrap иконок если нужны */
+.bi-info-circle {
+    margin-right: 5px;
+}
+</style>
+{% endblock %}

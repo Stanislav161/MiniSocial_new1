@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Мини Социальная Сеть</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <h1>Добро пожаловать!</h1>
+    <p>Главная страница на русском языке</p>
+    <p>✓ Middleware успешно перенаправляет с / на /ru/</p>
+    <p>✓ Все тесты пройдены!</p>
+
+    {% if user.is_authenticated %}
+        <p>Вы вошли как: {{ user.username }}</p>
+        <a href="{% url 'logout' %}">Выйти</a>
+    {% else %}
+        <p>Вы не авторизованы</p>
+        <a href="{% url 'login' %}">Войти</a>
+    {% endif %}
+</body>
+</html>

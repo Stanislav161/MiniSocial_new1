@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+
+{% block title %}Лента новостей{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+
+            <!-- Форма создания поста -->
+            {% if user.is_authenticated %}
+            <div class="card post-card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-pencil-square"></i> Создать пост
+                    </h5>
+                    <form method="post" action="{% url 'create_post' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <textarea name="content" class="form-control" rows="3"
+                                      placeholder="Что у вас нового?" required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <input type="file" name="image" class="form-control"
+                                       accept="image/*" style="width: auto;">
+                                <small class="text-muted">JPG, PNG до 5MB</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-send"></i> Опубликовать
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Переключатель ленты -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">{{ feed_title }}</h4>
+                        <div class="btn-group" role="group">
+                            <a href="?feed=following"
+                               class="btn btn-outline-primary {% if feed_type == 'following' %}active{% endif %}">
+                                <i class="bi bi-people"></i> Подписки
+                            </a>
+                            <a href="?feed=all"
+                               class="btn btn-outline-secondary {% if feed_type == 'all' %}active{% endif %}">
+                                <i class="bi bi-globe"></i> Все посты
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Статистика (только для ленты подписок) -->
+                    {% if feed_type == 'following' %}
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i>
+                            Вы видите посты от {{ request.user.following.count }} пользователей
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Лента постов -->
+            {% for post in posts %}
+            <div class="card post-card mb-4">
+                <div class="card-body">
+                    <!-- Заголовок поста -->
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            {% if post.author.profile.get_profile_picture_url %}
+                                <img src="{{ post.author.profile.get_profile_picture_url }}"
+                                     alt="{{ post.author.username }}"
+                                     class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                            {% else %}
+                                <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center"
+                                     style="width: 50px; height: 50px; background-color: #4a6fa5; color: white; font-weight: bold;">
+                                    {{ post.author.username|first|upper }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">
+                                <a href="{% url 'profile' post.author.username %}"
+                                   class="text-decoration-none text-dark">
+                                    {{ post.author.username }}
+                                </a>
+                            </h6>
+                            <small class="text-muted" data-bs-toggle="tooltip" data-bs-placement="top"
+                                   data-bs-title="Опубликовано: {{ post.created_at|date:'d.m.Y в H:i:s' }}">
+                                <i class="bi bi-clock"></i>
+                                <span>{{ post.created_at|timesince }} назад</span>
+                                • {{ post.created_at|date:"d.m.Y" }}
+                            </small>
+                        </div>
+                        {% if post.author == user %}
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary" type="button"
+                                    data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'post_edit' post.id %}">
+                                        <i class="bi bi-pencil"></i> Редактировать
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{% url 'post_delete' post.id %}">
+                                        <i class="bi bi-trash"></i> Удалить
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Текст поста -->
+                    <p class="card-text fs-5">{{ post.content }}</p>
+
+                    <!-- Изображение поста -->
+                    {% if post.get_image_url %}
+                    <div class="mt-3">
+                        <img src="{{ post.get_image_url }}" alt="Post image"
+                             class="img-fluid rounded" style="max-height: 400px; object-fit: cover;">
+                    </div>
+                    {% endif %}
+
+                    <!-- Комментарии (если есть) -->
+                    {% if post.comments.exists %}
+                        <div class="mt-3">
+                            <h6 class="text-muted mb-2">
+                                <i class="bi bi-chat-text"></i> Комментарии ({{ post.comments.count }})
+                            </h6>
+                            {% for comment in post.comments.all|slice:":3" %}
+                                <div class="comment mb-2">
+                                    <div class="d-flex align-items-start">
+                                        <div class="me-2">
+                                            {% if comment.author.profile.get_profile_picture_url %}
+                                                <img src="{{ comment.author.profile.get_profile_picture_url }}"
+                                                     alt="{{ comment.author.username }}"
+                                                     class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center"
+                                                     style="width: 30px; height: 30px; background-color: #6c757d; color: white; font-size: 0.8rem;">
+                                                    {{ comment.author.username|first|upper }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between">
+                                                <strong class="small">{{ comment.author.username }}</strong>
+                                                <small class="text-muted">{{ comment.created_at|timesince }} назад</small>
+                                            </div>
+                                            <p class="mb-0 small">{{ comment.content }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            {% if post.comments.count > 3 %}
+                                <a href="{% url 'post_detail' post.id %}" class="small text-decoration-none">
+                                    Показать все комментарии ({{ post.comments.count }})
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Действия -->
+                    <div class="mt-3 pt-3 border-top">
+                        <div class="d-flex gap-3 mb-3">
+                            <!-- Лайк -->
+                            <form method="post" action="{% url 'like_post' post.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger px-3">
+                                    <i class="bi bi-heart{% if request.user in post.likes.all %}-fill{% endif %} me-1"></i>
+                                    <span class="like-count fw-bold">{{ post.likes.count }}</span>
+                                </button>
+                            </form>
+
+                            <!-- Комментарий -->
+                            <span class="btn btn-outline-secondary px-3">
+                                <i class="bi bi-chat me-1"></i>
+                                <span class="fw-bold">{{ post.comments.count }}</span>
+                            </span>
+                        </div>
+
+                        <!-- Форма комментария -->
+                        <form method="post" action="{% url 'add_comment' post.id %}" class="mt-2">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" name="content" class="form-control"
+                                       placeholder="Напишите комментарий..." required>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-send me-1"></i> Отправить
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-5">
+                <i class="bi bi-newspaper display-1 text-muted"></i>
+                <h4 class="mt-3">Пока нет постов</h4>
+                <p class="text-muted">Будьте первым, кто поделится новостью!</p>
+            </div>
+            {% endfor %}
+
+            {% if is_paginated %}
+            <nav aria-label="Навигация по страницам">
+                <ul class="pagination justify-content-center mt-4">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if feed_type %}&feed={{ feed_type }}{% endif %}">
+                            &laquo; Назад
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo; Назад</span>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if feed_type %}&feed={{ feed_type }}{% endif %}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if feed_type %}&feed={{ feed_type }}{% endif %}">
+                            Вперед &raquo;
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Вперед &raquo;</span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

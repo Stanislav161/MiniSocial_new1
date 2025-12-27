@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card form-container shadow">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="avatar mx-auto mb-3" style="width: 70px; height: 70px; font-size: 1.8rem;">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+                    <h2 class="fw-bold">Вход в MiniSocial</h2>
+                    <p class="text-muted">Войдите в свой аккаунт</p>
+                </div>
+
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Неправильное имя пользователя или пароль. Попробуйте снова.
+                    </div>
+                {% endif %}
+
+                {% if next %}
+                    {% if user.is_authenticated %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-shield-exclamation me-2"></i>
+                        У вашей учетной записи нет доступа к этой странице.
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Пожалуйста, войдите, чтобы увидеть эту страницу.
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="bi bi-person me-1"></i>Имя пользователя
+                        </label>
+                        <input type="text" name="username" class="form-control form-control-lg"
+                               id="username" required placeholder="Введите имя пользователя"
+                               value="{% if form.username.value %}{{ form.username.value }}{% endif %}">
+                        {% if form.username.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.username.errors %}
+                                    <i class="bi bi-x-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-key me-1"></i>Пароль
+                        </label>
+                        <input type="password" name="password" class="form-control form-control-lg"
+                               id="password" required placeholder="Введите пароль">
+                        {% if form.password.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.password.errors %}
+                                    <i class="bi bi-x-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Войти
+                        </button>
+                    </div>
+
+                    <input type="hidden" name="next" value="{{ next|default:'/' }}">
+                </form>
+
+                <div class="text-center mt-3">
+                    <!-- Удаляем ссылку на сброс пароля, если не настроена -->
+                    <!--
+                    <p class="mb-2">
+                        <a href="{% url 'password_reset' %}" class="text-decoration-none">
+                            <i class="bi bi-question-circle"></i> Забыли пароль?
+                        </a>
+                    </p>
+                    -->
+                    <p class="mb-0">
+                        Нет аккаунта?
+                        <!-- Используем обычную ссылку, пока нет маршрута register -->
+                        <a href="/register/" class="text-decoration-none fw-bold">
+                            Зарегистрироваться
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-container {
+    border-radius: 15px;
+    border: none;
+}
+.form-control:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+.btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+.btn-primary:hover {
+    background-color: #2e59d9;
+    border-color: #2653d4;
+}
+.avatar {
+    background-color: #f8f9fc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4e73df;
+    border: 2px solid #e3e6f0;
+}
+</style>
+{% endblock %}

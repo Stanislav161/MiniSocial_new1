@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Социальная сеть - Добро пожаловать!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            padding: 40px;
+            background-color: #4a6fa5;
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .features {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+        }
+        .feature {
+            flex: 1;
+            padding: 20px;
+            margin: 0 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .auth-buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 0 10px;
+            background-color: #4a6fa5;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #3a5a8c;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Добро пожаловать в социальную сеть!</h1>
+        <p>Общайтесь, делитесь моментами и находите новых друзей</p>
+    </div>
+
+    <div class="features">
+        <div class="feature">
+            <h3>👥 Сообщества</h3>
+            <p>Присоединяйтесь к группам по интересам</p>
+        </div>
+        <div class="feature">
+            <h3>📷 Фото и видео</h3>
+            <p>Делитесь моментами из своей жизни</p>
+        </div>
+        <div class="feature">
+            <h3>💬 Общение</h3>
+            <p>Общайтесь с друзьями в реальном времени</p>
+        </div>
+    </div>
+
+    <div class="auth-buttons">
+        <h2>Начните прямо сейчас!</h2>
+        <a href="{% url 'register' %}" class="btn">Зарегистрироваться</a>
+        <a href="{% url 'login' %}" class="btn btn-secondary">Войти</a>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; color: #666;">
+        <p>Уже более 1000 пользователей присоединились к нашему сообществу!</p>
+    </div>
+</body>
+</html>

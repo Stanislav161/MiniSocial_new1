@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card form-container shadow">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="avatar mx-auto mb-3" style="width: 70px; height: 70px; font-size: 1.8rem;">
+                        <i class="bi bi-person-plus"></i>
+                    </div>
+                    <h2 class="fw-bold">Создайте аккаунт</h2>
+                    <p class="text-muted">Присоединяйтесь к нашему сообществу</p>
+                </div>
+
+                {% crispy form %}
+
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        Уже есть аккаунт?
+                        <a href="{% url 'login' %}" class="text-decoration-none fw-bold">
+                            Войти
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
