@@ -1,5 +1,8 @@
-# Ignore all files and folder in the node_modules directory
-node_modules/
-
-#Ignore all environment config file
-*.env
+*.pyc
+__pycache__/
+*.sqlite3
+.env
+media/
+staticfiles/
+.DS_Store
+.idea/
