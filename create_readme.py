@@ -1,4 +1,5 @@
-# 🚀 Социальная сеть на Django
+# create_readme.py
+readme_content = """# 🚀 Социальная сеть на Django
 
 ![Django](https://img.shields.io/badge/Django-4.2-green.svg)
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
@@ -23,3 +24,9 @@
 - **🔔 Система подписок** (follow/unfollow)
 - **🎨 Адаптивный дизайн** с Bootstrap 5
 - **⚡ Django Admin** для управления контентом
+"""
+
+with open('README.md', 'w', encoding='utf-8') as f:
+    f.write(readme_content)
+
+print("✅ README.md создан в корне проекта")
