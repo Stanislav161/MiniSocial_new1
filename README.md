@@ -23,7 +23,7 @@
 
 ```bash
 git clone <repository-url>
-cd MiniSocial
+cd MiniSocial_new1
 ```
 
 ### 2. Создание виртуального окружения
