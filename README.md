@@ -306,6 +306,5 @@ Django Crispy Forms https://django-crispy-forms.readthedocs.io/
 
 Django: https://www.djangoproject.com/
 
-<div align="center"> <sub>Создано с ❤️ и Django</sub> </div> """
-
+<div align="center"> <sub>Создано с ❤️ и Django</sub> </div> 
 

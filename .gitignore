@@ -1,8 +1,0 @@
-*.pyc
-__pycache__/
-*.sqlite3
-.env
-media/
-staticfiles/
-.DS_Store
-.idea/
